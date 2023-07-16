@@ -1,7 +1,8 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import t1 from "./img/t1.png";
-import t2 from "./img/t2.png";
+import t2 from "./img/impostor.png";
+import mask from "./img/t2.png";
 import fragment from "./shaders/fragment.glsl";
 import vertex from "./shaders/vertex.glsl";
 
@@ -24,6 +25,8 @@ export default class Sketch {
       new THREE.TextureLoader().load(t1),
       new THREE.TextureLoader().load(t2),
     ];
+
+    this.mask = new THREE.TextureLoader().load(mask);
     this.time = 0;
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.addMesh();
@@ -38,8 +41,12 @@ export default class Sketch {
         progress: { type: "f", value: 0 },
         t1: { type: "t", value: this.textures[0] },
         t2: { type: "t", value: this.textures[1] },
+        mask: { type: "t", value: this.mask },
       },
       side: THREE.DoubleSide,
+      transparent: true,
+      depthTest: false,
+      depthWrite: false,
     });
 
     let number = 512 * 512;
