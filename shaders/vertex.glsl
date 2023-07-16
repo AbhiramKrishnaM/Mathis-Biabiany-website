@@ -5,13 +5,11 @@ attribute float aSpeed;
 attribute float aOffset;
 attribute float aDirection;
 attribute float aPress;
-
-
 uniform float move;
 uniform float time; 
-
 uniform vec2 mouse; 
 uniform float mousePressed; 
+uniform float transition;
 
 
 
@@ -31,9 +29,10 @@ stable.y += 50.*sin(0.1*time*aPress)*aDirection*area*mousePressed;
 stable.z += 200.*cos(0.1*time*aPress)*aDirection*area*mousePressed;
 
 
+pos = mix(pos, stable, transition);
 
 // stable
-    vec4 mvPosition = modelViewMatrix * vec4(stable, 1.);
+    vec4 mvPosition = modelViewMatrix * vec4(pos, 1.);
     gl_PointSize = 3000. * (1. / - mvPosition.z);
     gl_Position = projectionMatrix * mvPosition;
     vCoordinates = aCoordinates.xy; 
