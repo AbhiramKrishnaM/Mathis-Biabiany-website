@@ -9,12 +9,12 @@ export default class Sketch {
     document.getElementById("container").appendChild(this.renderer.domElement);
 
     this.camera = new THREE.PerspectiveCamera(
-      70,
+      45,
       window.innerWidth / window.innerHeight,
-      0.01,
-      10
+      1,
+      3000
     );
-    this.camera.position.z = 1;
+    this.camera.position.z = 1000;
     this.scene = new THREE.Scene();
     this.addMesh();
     this.time = 0;
@@ -22,8 +22,6 @@ export default class Sketch {
   }
 
   addMesh() {
-    this.geometry = new THREE.PlaneGeometry(1, 1);
-    this.material = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide });
     this.material = new THREE.ShaderMaterial({
       fragmentShader: fragment,
       vertexShader: vertex,
@@ -32,6 +30,23 @@ export default class Sketch {
       },
       side: THREE.DoubleSide,
     });
+
+    this.geometry = new THREE.BufferGeometry();
+    let number = 512 * 512;
+    this.positions = new THREE.BufferAttribute(new Float32Array(number * 3));
+
+    let index = 0;
+    for (let i = 0; i < 512; i++) {
+      for (let j = 0; j < 512; j++) {
+        this.positions.setXYZ(index, i, j, 0);
+        index++;
+      }
+    }
+
+    this.geometry.setAttribute("postion", this.positions);
+
+    console.log(this.positions);
+
     this.mesh = new THREE.Points(this.geometry, this.material);
     this.scene.add(this.mesh);
   }
