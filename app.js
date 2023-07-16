@@ -5,6 +5,7 @@ import t2 from "./img/impostor.png";
 import mask from "./img/t2.png";
 import fragment from "./shaders/fragment.glsl";
 import vertex from "./shaders/vertex.glsl";
+import gsap from "gsap";
 
 export default class Sketch {
   constructor() {
@@ -23,6 +24,7 @@ export default class Sketch {
 
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2();
+    this.point = new THREE.Vector2();
 
     this.textures = [
       new THREE.TextureLoader().load(t1),
@@ -44,6 +46,19 @@ export default class Sketch {
       new THREE.MeshBasicMaterial()
     );
 
+    window.addEventListener("mousedown", (e) => {
+      gsap.to(this.material.uniforms.mousePressed, {
+        duration: 0.5,
+        value: 1,
+      });
+    });
+    window.addEventListener("mouseup", (e) => {
+      gsap.to(this.material.uniforms.mousePressed, {
+        duration: 0.5,
+        value: 0,
+      });
+    });
+
     window.addEventListener("wheel", (e) => {
       this.move += e.deltaY / 1000;
     });
@@ -57,7 +72,8 @@ export default class Sketch {
       // calculate objects intersecting the picking ray
       let intersects = this.raycaster.intersectObjects([this.test]);
 
-      console.log(intersects[0].point);
+      this.point.x = intersects[0].point.x;
+      this.point.y = intersects[0].point.y;
     });
   }
 
@@ -70,6 +86,7 @@ export default class Sketch {
         t1: { type: "t", value: this.textures[0] },
         t2: { type: "t", value: this.textures[1] },
         mask: { type: "t", value: this.mask },
+        mousePressed: { type: "f", value: 0 },
         mouse: { type: "v2", value: null },
         move: { type: "f", value: 0 },
         time: { type: "f", value: 0 },
@@ -128,7 +145,7 @@ export default class Sketch {
     // this.mesh.rotation.y += 0.02;
     this.material.uniforms.time.value = this.time;
     this.material.uniforms.move.value = this.move;
-    this.material.uniforms.mouse.value = this.mouse;
+    this.material.uniforms.mouse.value = this.point;
     this.renderer.render(this.scene, this.camera);
     window.requestAnimationFrame(this.render.bind(this));
   }

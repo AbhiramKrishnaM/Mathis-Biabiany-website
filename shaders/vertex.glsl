@@ -11,6 +11,7 @@ uniform float move;
 uniform float time; 
 
 uniform vec2 mouse; 
+uniform float mousePressed; 
 
 
 
@@ -22,12 +23,12 @@ void main(){
     pos.z = mod(position.z + move*200.*aSpeed + aOffset, 2000.) - 1000.;
 
 vec3 stable = position;
+float dist = distance(stable.xy, mouse);
+float area =1. -  smoothstep(0., 300., dist);
 
-float distance = distance(stable.xy, mouse);
-
-stable.x += 50.*sin(0.1*time*aPress)*aDirection;
-stable.y += 50.*sin(0.1*time*aPress)*aDirection;
-stable.z += 200.*cos(0.1*time*aPress)*aDirection;
+stable.x += 50.*sin(0.1*time*aPress)*aDirection*area*mousePressed;
+stable.y += 50.*sin(0.1*time*aPress)*aDirection*area*mousePressed;
+stable.z += 200.*cos(0.1*time*aPress)*aDirection*area*mousePressed;
 
 
 
